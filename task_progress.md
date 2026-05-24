@@ -1,0 +1,12 @@
+- [x] Create Vue 3 project with Vite
+- [ ] Install Tailwind CSS, animations libraries, and other dependencies
+- [ ] Configure Tailwind and project settings
+- [ ] Create main layout components (Navbar, Footer)
+- [ ] Create Home page with Hero section
+- [ ] Create Services section
+- [ ] Create About/Portfolio section
+- [ ] Create Testimonials section
+- [ ] Create Contact section
+- [ ] Create additional pages (Services, About, Contact)
+- [ ] Add animations and transitions
+- [ ] Final styling and polish
