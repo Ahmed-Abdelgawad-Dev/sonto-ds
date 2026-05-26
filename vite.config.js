@@ -13,8 +13,5 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  base: '/sonto-ds/'
+  base: '/'
 })
-
-
-// https://ahmed-abdelgawad-dev.github.io/sonto-ds/#/
