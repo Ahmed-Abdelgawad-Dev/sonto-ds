@@ -21,11 +21,11 @@ const services = [
     gradient: "from-secondary to-cyan-500",
   },
   {
-    icon: "🤖",
-    title: "AI Solutions",
+    icon: "📧",
+    title: "Email Hosting",
     description:
-      "Intelligent automation and machine learning solutions that transform your business processes and decision-making.",
-    gradient: "from-purple-500 to-pink-500",
+      "Reliable and secure email hosting solutions with advanced spam protection, custom domains, and seamless collaboration tools to keep your business communications professional.",
+    gradient: "from-green-500 to-emerald-500",
   },
   {
     icon: "☁️",
@@ -59,43 +59,43 @@ const stats = [
 
 const testimonials = [
   {
-    name: "Sarah Johnson",
-    role: "CEO, TechVentures",
+    name: "Ahmed Abdel Ghaffar",
+    role: "CEO, SONTO",
     content:
       "SONTO transformed our digital presence completely. Their team's expertise in web development and AI solutions is unmatched. We saw a 200% increase in engagement within months.",
-    avatar: "SJ",
+    avatar: "AG",
     gradient: "from-primary to-purple-500",
   },
   {
-    name: "Michael Chen",
-    role: "CTO, DataFlow Inc",
+    name: "Sara Mourad",
+    role: "CTO, TechFlow",
     content:
-      "Working with SONTO was a game-changer for our business. Their cloud solutions helped us scale efficiently while reducing costs by 40%. Highly recommended!",
-    avatar: "MC",
+      "Working with SONTO was a game-changer for our business. Their cloud solutions helped us scale efficiently while reducing costs by 40%.",
+    avatar: "SM",
     gradient: "from-secondary to-cyan-500",
   },
   {
-    name: "Emily Rodriguez",
+    name: "Khaleed Al-Nami",
     role: "Founder, CreativeLab",
     content:
       "The UI/UX design team at SONTO truly understands user experience. They created an intuitive interface that our customers love. Professional, creative, and reliable.",
-    avatar: "ER",
+    avatar: "KA",
     gradient: "from-amber-500 to-orange-500",
   },
   {
-    name: "David Kim",
-    role: "VP Eng, CloudBase",
+    name: "Noura Al-Sa'id",
+    role: "VP Engineering, CloudBase",
     content:
       "The cloud migration SONTO handled for us was seamless. Zero downtime, optimized costs, and their team was incredibly responsive throughout the entire process.",
-    avatar: "DK",
+    avatar: "NA",
     gradient: "from-emerald-500 to-teal-500",
   },
   {
-    name: "Lisa Thompson",
+    name: "Ahmed Abdel Hamid",
     role: "Director, NextGen",
     content:
       "SONTO's AI solutions revolutionized our data analytics capabilities. What used to take weeks now happens in real-time. Truly transformative technology.",
-    avatar: "LT",
+    avatar: "AA",
     gradient: "from-rose-500 to-red-500",
   },
 ];
@@ -120,7 +120,7 @@ const faqs = [
   },
   {
     q: "What technologies do you use?",
-    a: "We work with modern technologies including Vue.js, React, Node.js, Python, AWS, Google Cloud, TensorFlow, and many more cutting-edge tools and frameworks.",
+    a: "We work with modern technologies including Vue.js, React, Node.js, Python, AWS, Django Framework, TensorFlow, and many more cutting-edge tools and frameworks.",
   },
   {
     q: "Do you offer post-launch support?",
@@ -279,7 +279,7 @@ onBeforeUnmount(() => {
         >
           <router-link
             to="/contact"
-            class="group relative px-8 py-4 rounded-xl text-lg font-semibold text-white gradient-primary overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-primary/30 hover:scale-105"
+            class="group relative px-8 py-4 rounded-xl text-lg font-semibold text-white gradient-primary overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-primary/30 hover:scale-105 btn-border-glow"
           >
             <span class="relative z-10">Start Your Project</span>
             <div
@@ -472,7 +472,7 @@ onBeforeUnmount(() => {
 
             <router-link
               to="/about"
-              class="inline-flex items-center gap-2 mt-8 px-6 py-3 rounded-xl text-white gradient-primary hover:shadow-lg hover:shadow-primary/30 transition-all duration-300"
+              class="inline-flex items-center gap-2 mt-8 px-6 py-3 rounded-xl text-white gradient-primary hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 btn-border-glow"
             >
               Learn More About Us
               <svg
@@ -984,7 +984,7 @@ onBeforeUnmount(() => {
           <p class="text-gray-500 text-sm mb-4">Still have questions?</p>
           <router-link
             to="/contact"
-            class="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white gradient-primary hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:scale-105"
+            class="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white gradient-primary hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:scale-105 btn-border-glow"
           >
             <svg
               class="w-4 h-4"
@@ -1036,7 +1036,7 @@ onBeforeUnmount(() => {
           >
             <router-link
               to="/contact"
-              class="group relative px-8 py-4 rounded-xl text-lg font-semibold text-white gradient-primary overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-primary/30 hover:scale-105"
+              class="group relative px-8 py-4 rounded-xl text-lg font-semibold text-white gradient-primary overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-primary/30 hover:scale-105 btn-border-glow"
             >
               <span class="relative z-10">Get In Touch</span>
               <div

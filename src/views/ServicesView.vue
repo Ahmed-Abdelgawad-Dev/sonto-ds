@@ -16,7 +16,7 @@ const services = [
       "Performance Optimization",
     ],
     gradient: "from-primary to-purple-500",
-    price: "Starting from $5,000",
+    // price: "Custom Pricing",
   },
   {
     icon: "📱",
@@ -32,7 +32,7 @@ const services = [
       "Real-Time Features",
     ],
     gradient: "from-secondary to-cyan-500",
-    price: "Starting from $8,000",
+    // price: "Custom Pricing",
   },
   {
     icon: "📊",
@@ -48,7 +48,7 @@ const services = [
       "Analytics & Insights",
     ],
     gradient: "from-rose-500 to-red-500",
-    price: "Custom Pricing",
+    // price: "Custom Pricing",
   },
   {
     icon: "☁️",
@@ -64,7 +64,7 @@ const services = [
       "Security & Compliance",
     ],
     gradient: "from-amber-500 to-orange-500",
-    price: "Starting from $3,000",
+    // price: "Custom Pricing",
   },
   {
     icon: "🎨",
@@ -80,7 +80,7 @@ const services = [
       "Usability Testing",
     ],
     gradient: "from-emerald-500 to-teal-500",
-    price: "Starting from $4,000",
+    // price: "Custom Pricing",
   },
   {
     icon: "🤖",
@@ -96,7 +96,7 @@ const services = [
       "Process Automation",
     ],
     gradient: "from-purple-500 to-pink-500",
-    price: "Custom Pricing",
+    // price: "Custom Pricing",
   },
 ];
 
@@ -425,7 +425,7 @@ onMounted(() => {
               class="block w-full py-3 rounded-xl text-center font-semibold transition-all duration-300"
               :class="
                 plan.highlighted
-                  ? 'gradient-primary text-white hover:shadow-lg hover:shadow-primary/30'
+                  ? 'gradient-primary text-white hover:shadow-lg hover:shadow-primary/30 btn-border-glow'
                   : 'glass border border-white/10 text-white hover:border-primary/30 hover:bg-white/5'
               "
             >
@@ -448,7 +448,7 @@ onMounted(() => {
         </p>
         <router-link
           to="/contact"
-          class="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-lg font-semibold text-white gradient-primary hover:shadow-lg hover:shadow-primary/30 transition-all duration-300"
+          class="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-lg font-semibold text-white gradient-primary hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 btn-border-glow"
         >
           Book a Free Consultation
           <svg

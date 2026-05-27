@@ -80,12 +80,12 @@ onMounted(() => {
             v-for="link in navLinks"
             :key="link.name"
             :to="link.path"
-            class="relative px-5 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg"
-            :class="
+            class="relative px-5 py-2.5 text-sm font-medium transition-all duration-300 rounded-lg nav-link-glow"
+            :class="[
               activeLink === link.name
-                ? 'text-white'
-                : 'text-gray-400 hover:text-white hover:bg-white/5'
-            "
+                ? 'text-white active-link'
+                : 'text-gray-400 hover:text-white hover:bg-white/5',
+            ]"
           >
             {{ link.name }}
             <span
@@ -99,7 +99,7 @@ onMounted(() => {
         <div class="hidden lg:flex items-center space-x-4">
           <router-link
             to="/contact"
-            class="relative px-6 py-2.5 rounded-xl text-sm font-semibold text-white gradient-primary overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/30"
+            class="relative px-6 py-2.5 rounded-xl text-sm font-semibold text-white gradient-primary overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-primary/30 btn-border-glow"
           >
             <span class="relative z-10">Get Started</span>
             <div

@@ -10,7 +10,7 @@ const footerLinks = {
   Services: [
     { name: "Web Development", path: "/services" },
     { name: "Mobile Apps", path: "/services" },
-    { name: "AI Solutions", path: "/services" },
+    { name: "Email Hosting", path: "/services" },
     { name: "Cloud Services", path: "/services" },
   ],
   Support: [

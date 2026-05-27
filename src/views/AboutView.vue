@@ -292,7 +292,7 @@ onMounted(() => {
         </p>
         <router-link
           to="/contact"
-          class="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-lg font-semibold text-white gradient-primary hover:shadow-lg hover:shadow-primary/30 transition-all duration-300"
+          class="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-lg font-semibold text-white gradient-primary hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 btn-border-glow"
         >
           Get in Touch
           <svg

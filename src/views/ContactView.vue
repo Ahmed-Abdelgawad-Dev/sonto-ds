@@ -13,11 +13,10 @@ const submitted = ref(false);
 
 const services = [
   "Web Development",
+  "Email Hosting",
   "Mobile Development",
-  "AI Solutions",
   "Cloud Services",
-  "UI/UX Design",
-  "Digital Strategy",
+  "Digital Strategy & Marketing",
   "Other",
 ];
 
@@ -25,14 +24,14 @@ const contactInfo = [
   {
     icon: "📧",
     label: "Email",
-    value: "hello@sonto.digital",
-    href: "mailto:hello@sonto.digital",
+    value: "contact@sonto.dev",
+    href: "mailto:contact@sonto.dev",
   },
   {
     icon: "📞",
     label: "Phone",
-    value: "+20 100 000 0000",
-    href: "tel:+201000000000",
+    value: "+20 1018200400",
+    href: "tel:+20 1018200400",
   },
   {
     icon: "📍",
@@ -131,7 +130,7 @@ onMounted(() => {
                   v-model="form.name"
                   type="text"
                   required
-                  placeholder="John Doe"
+                  placeholder="Your Name"
                   class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-300"
                 />
               </div>
@@ -149,7 +148,7 @@ onMounted(() => {
                   v-model="form.email"
                   type="email"
                   required
-                  placeholder="john@example.com"
+                  placeholder="email@example.com"
                   class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-300"
                 />
               </div>
@@ -218,7 +217,7 @@ onMounted(() => {
 
               <button
                 type="submit"
-                class="w-full py-4 rounded-xl text-lg font-semibold text-white gradient-primary hover:shadow-lg hover:shadow-primary/30 transition-all duration-300"
+                class="w-full py-4 rounded-xl text-lg font-semibold text-white gradient-primary hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 btn-border-glow"
               >
                 Send Message
               </button>
@@ -282,9 +281,7 @@ onMounted(() => {
           <div class="p-8 rounded-2xl glass border border-white/5 text-center">
             <div class="text-4xl mb-4">🌍</div>
             <h3 class="text-white font-semibold mb-2">Visit Our Office</h3>
-            <p class="text-gray-400 text-sm">
-              42 Digital Avenue, New Cairo<br />Cairo, Egypt
-            </p>
+            <p class="text-gray-400 text-sm">Giza, Cairo<br />Cairo, Egypt</p>
           </div>
         </div>
       </div>
@@ -302,7 +299,7 @@ onMounted(() => {
           you may have.
         </p>
         <a
-          href="tel:+201000000000"
+          href="tel:+201018200400"
           class="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-lg font-semibold text-white glass border border-white/10 hover:border-primary/30 hover:bg-white/5 transition-all duration-300"
         >
           <svg
@@ -318,7 +315,7 @@ onMounted(() => {
               d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
             />
           </svg>
-          +20 100 000 0000
+          +201 018200400
         </a>
       </div>
     </section>
