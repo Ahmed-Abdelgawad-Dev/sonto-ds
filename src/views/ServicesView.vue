@@ -35,19 +35,19 @@ const services = [
     price: "Starting from $8,000",
   },
   {
-    icon: "🤖",
-    title: "AI & Machine Learning",
+    icon: "📊",
+    title: "Digital Strategy",
     description:
-      "Leverage the power of artificial intelligence to automate processes, gain insights, and create intelligent solutions. Our AI experts help you harness data for business growth.",
+      "Data-driven strategies that help businesses navigate digital transformation. We analyze, plan, and execute comprehensive digital roadmaps for sustainable growth.",
     features: [
-      "Predictive Analytics",
-      "Natural Language Processing",
-      "Computer Vision",
-      "Chatbots & Virtual Assistants",
-      "Recommendation Systems",
-      "Process Automation",
+      "Digital Transformation",
+      "Market Analysis",
+      "Technology Consulting",
+      "Growth Strategy",
+      "Brand Strategy",
+      "Analytics & Insights",
     ],
-    gradient: "from-purple-500 to-pink-500",
+    gradient: "from-rose-500 to-red-500",
     price: "Custom Pricing",
   },
   {
@@ -83,19 +83,19 @@ const services = [
     price: "Starting from $4,000",
   },
   {
-    icon: "📊",
-    title: "Digital Strategy",
+    icon: "🤖",
+    title: "AI & Machine Learning",
     description:
-      "Data-driven strategies that help businesses navigate digital transformation. We analyze, plan, and execute comprehensive digital roadmaps for sustainable growth.",
+      "Leverage the power of artificial intelligence to automate processes, gain insights, and create intelligent solutions. Our AI experts help you harness data for business growth.",
     features: [
-      "Digital Transformation",
-      "Market Analysis",
-      "Technology Consulting",
-      "Growth Strategy",
-      "Brand Strategy",
-      "Analytics & Insights",
+      "Predictive Analytics",
+      "Natural Language Processing",
+      "Computer Vision",
+      "Chatbots & Virtual Assistants",
+      "Recommendation Systems",
+      "Process Automation",
     ],
-    gradient: "from-rose-500 to-red-500",
+    gradient: "from-purple-500 to-pink-500",
     price: "Custom Pricing",
   },
 ];
@@ -187,7 +187,7 @@ const observeElements = () => {
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          entry.target.classList.add("animate-fade-in");
+          entry.target.setAttribute("data-animated", "true");
           observer.unobserve(entry.target);
         }
       });
