@@ -178,7 +178,7 @@ const observeElements = () => {
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          entry.target.classList.add("animate-fade-in");
+          entry.target.setAttribute("data-animated", "true");
           observer.unobserve(entry.target);
         }
       });
@@ -1057,12 +1057,32 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+/* Animate elements when they scroll into view using data-animated attribute */
+.animate-on-scroll {
+  opacity: 0;
+}
+
+.animate-on-scroll[data-animated="true"] {
+  animation: fade-in 0.6s ease-out forwards;
+}
+
 /* Testimonials slide transition */
 .testimonial-slide-enter-active {
   animation: testimonial-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .testimonial-slide-leave-active {
   animation: testimonial-leave 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes testimonial-enter {
