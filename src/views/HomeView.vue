@@ -882,7 +882,12 @@ onBeforeUnmount(() => {
   <div class="relative">
     <!-- Scroll Progress Bar -->
     <div
-      class="fixed top-20 left-0 h-0.5 bg-gradient-to-r from-primary via-secondary to-accent z-40 transition-all duration-150"
+      class="fixed top-20 left-0 h-1 bg-gradient-to-r from-primary via-secondary to-accent z-40 transition-all duration-150 shadow-lg shadow-primary/20"
+      :style="{ width: scrollProgress + '%' }"
+    ></div>
+    <!-- Glow line beneath -->
+    <div
+      class="fixed top-[5.25rem] left-0 h-2 bg-gradient-to-r from-primary/20 via-secondary/10 to-accent/20 z-40 pointer-events-none"
       :style="{ width: scrollProgress + '%' }"
     ></div>
 
@@ -959,7 +964,7 @@ onBeforeUnmount(() => {
 
           <router-link
             to="/services"
-            class="group px-8 py-4 rounded-xl text-lg font-semibold text-white glass border border-white/10 hover:border-primary/30 hover:bg-white/5 transition-all duration-300"
+            class="group px-8 py-4 rounded-xl text-lg font-semibold text-white glass border border-white/10 hover:border-primary/30 hover:bg-white/5 transition-all duration-300 btn-border-glow"
           >
             <span class="flex items-center gap-2">
               Explore Services
@@ -1756,7 +1761,7 @@ onBeforeUnmount(() => {
             </router-link>
             <router-link
               to="/services"
-              class="group px-8 py-4 rounded-xl text-lg font-semibold text-white glass border border-white/10 hover:border-primary/30 hover:bg-white/5 transition-all duration-300"
+              class="group px-8 py-4 rounded-xl text-lg font-semibold text-white glass border border-white/10 hover:border-primary/30 hover:bg-white/5 transition-all duration-300 btn-border-glow"
             >
               View Our Services
             </router-link>

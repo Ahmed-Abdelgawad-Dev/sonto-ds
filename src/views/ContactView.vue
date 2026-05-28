@@ -300,7 +300,7 @@ onMounted(() => {
         </p>
         <a
           href="tel:+201018200400"
-          class="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-lg font-semibold text-white glass border border-white/10 hover:border-primary/30 hover:bg-white/5 transition-all duration-300"
+          class="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-lg font-semibold text-white glass border border-white/10 hover:border-primary/30 hover:bg-white/5 transition-all duration-300 btn-border-glow"
         >
           <svg
             class="w-5 h-5"
