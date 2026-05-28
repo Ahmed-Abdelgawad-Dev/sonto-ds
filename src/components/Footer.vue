@@ -37,13 +37,36 @@ const footerLinks = {
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
         <!-- Brand -->
         <div class="lg:col-span-2">
-          <router-link to="/" class="flex items-center space-x-2 mb-6">
+          <router-link
+            to="/"
+            class="flex flex-col mb-6 group"
+            style="width: fit-content"
+          >
             <div
-              class="w-10 h-10 flex items-center justify-center rounded-xl gradient-primary shadow-lg shadow-primary/30"
+              class="flex items-baseline justify-between w-full text-[28px] font-extrabold leading-none"
             >
-              <span class="text-white font-extrabold text-lg">S</span>
+              <span
+                class="bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 bg-clip-text text-transparent"
+                >S</span
+              ><span
+                class="bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 bg-clip-text text-transparent"
+                >O</span
+              ><span
+                class="bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 bg-clip-text text-transparent"
+                >N</span
+              ><span
+                class="bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 bg-clip-text text-transparent"
+                >T</span
+              ><span
+                class="bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 bg-clip-text text-transparent"
+                >O</span
+              >
             </div>
-            <span class="text-2xl font-extrabold text-white">SONTO</span>
+            <span
+              class="text-[11px] font-medium tracking-[0.3em] text-gray-500 uppercase"
+            >
+              Digital Solutions
+            </span>
           </router-link>
           <p class="text-gray-400 text-sm leading-relaxed mb-6 max-w-sm">
             Empowering businesses with cutting-edge digital solutions. We

@@ -59,18 +59,38 @@ onMounted(() => {
         <!-- Logo -->
         <router-link
           to="/"
-          class="flex items-center space-x-2 group"
+          class="flex flex-col items-stretch group"
           @click="closeMenu"
         >
           <div
-            class="relative w-10 h-10 flex items-center justify-center rounded-xl gradient-primary shadow-lg shadow-primary/30 group-hover:shadow-primary/50 transition-all duration-300"
+            class="flex items-baseline justify-between w-full text-[28px] font-extrabold leading-none"
           >
-            <span class="text-white font-extrabold text-lg">S</span>
+            <span
+              class="ignite-letter bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 bg-clip-text text-transparent"
+              style="--i: 0"
+              >S</span
+            ><span
+              class="ignite-letter bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 bg-clip-text text-transparent"
+              style="--i: 1"
+              >O</span
+            ><span
+              class="ignite-letter bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 bg-clip-text text-transparent"
+              style="--i: 2"
+              >N</span
+            ><span
+              class="ignite-letter bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 bg-clip-text text-transparent"
+              style="--i: 3"
+              >T</span
+            ><span
+              class="ignite-letter bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 bg-clip-text text-transparent"
+              style="--i: 4"
+              >O</span
+            >
           </div>
           <span
-            class="text-2xl font-extrabold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent"
+            class="text-[11px] font-medium tracking-[0.3em] text-gray-500 uppercase group-hover:text-indigo-400/80 transition-all duration-500"
           >
-            SONTO
+            Digital Solutions
           </span>
         </router-link>
 
@@ -178,3 +198,64 @@ onMounted(() => {
     </Transition>
   </nav>
 </template>
+
+<style scoped>
+.ignite-letter {
+  position: relative;
+  display: inline-block;
+}
+
+.group:hover .ignite-letter {
+  animation:
+    ignite 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--i) * 0.08s)
+      forwards,
+    pulse-glow 3s ease-in-out calc(var(--i) * 0.08s + 0.9s) infinite;
+}
+
+@keyframes ignite {
+  0% {
+    filter: brightness(1) drop-shadow(0 0 0px transparent);
+    transform: translateY(0);
+  }
+  15% {
+    filter: brightness(2.5) drop-shadow(0 0 30px rgba(99, 102, 241, 0.9))
+      drop-shadow(0 0 60px rgba(79, 70, 229, 0.6));
+    transform: translateY(-3px);
+  }
+  30% {
+    filter: brightness(1.2) drop-shadow(0 0 20px rgba(99, 102, 241, 0.5))
+      drop-shadow(0 0 40px rgba(79, 70, 229, 0.3));
+    transform: translateY(1px);
+  }
+  50% {
+    filter: brightness(1.4) drop-shadow(0 0 25px rgba(99, 102, 241, 0.6))
+      drop-shadow(0 0 50px rgba(139, 92, 246, 0.4));
+    transform: translateY(-1px);
+  }
+  75% {
+    filter: brightness(1.15) drop-shadow(0 0 15px rgba(99, 102, 241, 0.4))
+      drop-shadow(0 0 35px rgba(139, 92, 246, 0.25));
+    transform: translateY(0);
+  }
+  100% {
+    filter: brightness(1.3) drop-shadow(0 0 20px rgba(99, 102, 241, 0.5))
+      drop-shadow(0 0 45px rgba(79, 70, 229, 0.35))
+      drop-shadow(0 0 80px rgba(139, 92, 246, 0.15));
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    filter: brightness(1.3) drop-shadow(0 0 20px rgba(99, 102, 241, 0.5))
+      drop-shadow(0 0 45px rgba(79, 70, 229, 0.35))
+      drop-shadow(0 0 80px rgba(139, 92, 246, 0.15));
+  }
+  50% {
+    filter: brightness(1.5) drop-shadow(0 0 35px rgba(99, 102, 241, 0.75))
+      drop-shadow(0 0 70px rgba(79, 70, 229, 0.55))
+      drop-shadow(0 0 110px rgba(139, 92, 246, 0.3));
+  }
+}
+</style>

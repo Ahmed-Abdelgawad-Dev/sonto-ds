@@ -165,7 +165,7 @@ onMounted(() => {
                   id="phone"
                   v-model="form.phone"
                   type="tel"
-                  placeholder="+20 1018200400"
+                  placeholder="+20 100000000"
                   class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-300"
                 />
               </div>

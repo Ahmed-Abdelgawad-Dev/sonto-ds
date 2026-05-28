@@ -1,6 +1,7 @@
 <script setup>
 import Navbar from "@/components/Navbar.vue";
 import Footer from "@/components/Footer.vue";
+import WhatsAppButton from "@/components/WhatsAppButton.vue";
 import { ref, onMounted } from "vue";
 
 const isLoading = ref(true);
@@ -47,6 +48,7 @@ onMounted(() => {
       </router-view>
     </main>
     <Footer />
+    <WhatsAppButton />
   </div>
 </template>
 
