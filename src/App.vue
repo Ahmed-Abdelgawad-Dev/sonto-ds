@@ -2,41 +2,9 @@
 import Navbar from "@/components/Navbar.vue";
 import Footer from "@/components/Footer.vue";
 import WhatsAppButton from "@/components/WhatsAppButton.vue";
-import { ref, onMounted } from "vue";
-
-const isLoading = ref(true);
-
-onMounted(() => {
-  setTimeout(() => {
-    isLoading.value = false;
-  }, 500);
-});
 </script>
 
 <template>
-  <!-- Loading Screen -->
-  <Transition name="fade">
-    <div
-      v-if="isLoading"
-      class="fixed inset-0 z-[100] bg-dark flex items-center justify-center"
-    >
-      <div class="text-center">
-        <div class="relative w-20 h-20 mx-auto mb-6">
-          <div
-            class="absolute inset-0 border-4 border-primary/20 rounded-full"
-          ></div>
-          <div
-            class="absolute inset-0 border-4 border-transparent border-t-primary rounded-full animate-spin"
-          ></div>
-          <div
-            class="absolute inset-2 bg-gradient-to-br from-primary to-secondary rounded-full animate-pulse"
-          ></div>
-        </div>
-        <span class="text-2xl font-bold gradient-text">SONTO</span>
-      </div>
-    </div>
-  </Transition>
-
   <!-- Main Content -->
   <div class="min-h-screen bg-dark overflow-hidden">
     <Navbar />

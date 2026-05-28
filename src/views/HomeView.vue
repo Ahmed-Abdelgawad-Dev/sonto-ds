@@ -1,9 +1,21 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
+import gsap from "gsap";
 
 const router = useRouter();
 const animatedElements = ref([]);
+const canvasRef = ref(null);
+const servicesCanvasRef = ref(null);
+const aboutCanvasRef = ref(null);
+const whyCanvasRef = ref(null);
+const testimonialCanvasRef = ref(null);
+const faqCanvasRef = ref(null);
+const ctaCanvasRef = ref(null);
+const heroContentRef = ref(null);
+let animationTween = null;
+let particles = [];
+const animCleanups = [];
 
 const services = [
   {
@@ -191,9 +203,574 @@ const observeElements = () => {
   });
 };
 
+const initSectionCanvas = (canvasRef, initFn) => {
+  const canvas = canvasRef.value;
+  if (!canvas) return null;
+  const ctx = canvas.getContext("2d");
+  const parent = canvas.parentElement;
+  const w = () => parent.offsetWidth;
+  const h = () => parent.offsetHeight;
+  canvas.width = w();
+  canvas.height = h();
+
+  // Mouse tracking
+  const mouse = { x: -9999, y: -9999 };
+  const handleMouseMove = (e) => {
+    const rect = parent.getBoundingClientRect();
+    mouse.x = e.clientX - rect.left;
+    mouse.y = e.clientY - rect.top;
+  };
+  const handleMouseLeave = () => {
+    mouse.x = -9999;
+    mouse.y = -9999;
+  };
+  parent.addEventListener("mousemove", handleMouseMove);
+  parent.addEventListener("mouseleave", handleMouseLeave);
+
+  const state = initFn(ctx, w, h, canvas, mouse);
+  const animate = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (state.animate) state.animate(ctx, w, h, mouse);
+  };
+
+  const ticker = gsap.ticker.add(animate);
+
+  const handleResize = () => {
+    canvas.width = w();
+    canvas.height = h();
+    if (state.resize) state.resize(canvas, w, h);
+  };
+  window.addEventListener("resize", handleResize);
+
+  return {
+    ticker,
+    resizeHandler: handleResize,
+    mouseCleanup: () => {
+      parent.removeEventListener("mousemove", handleMouseMove);
+      parent.removeEventListener("mouseleave", handleMouseLeave);
+    },
+  };
+};
+
+/* ─── 1. HERO: Particle Network ─── */
+const initHero = (ctx, w, h, canvas, mouse) => {
+  const PARTICLE_COUNT = 60;
+  const CONNECTION_DIST = 150;
+  const colors = ["99, 102, 241", "6, 182, 212", "167, 139, 250"];
+  const particles = [];
+
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    particles.push({
+      x: Math.random() * w(),
+      y: Math.random() * h(),
+      size: Math.random() * 2.5 + 1,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      opacity: Math.random() * 0.5 + 0.3,
+      baseSize: Math.random() * 2.5 + 1,
+    });
+  }
+
+  return {
+    animate: (ctx, w, h, mouse) => {
+      particles.forEach((p) => {
+        // Mouse interaction: attract and enlarge near mouse
+        const dx = mouse.x - p.x;
+        const dy = mouse.y - p.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 200) {
+          const force = (1 - dist / 200) * 0.3;
+          p.vx += dx * force * 0.01;
+          p.vy += dy * force * 0.01;
+          p.size = p.baseSize + (1 - dist / 200) * 4;
+          p.opacity = Math.min(1, p.opacity + (1 - dist / 200) * 0.4);
+        } else {
+          p.size += (p.baseSize - p.size) * 0.05;
+          p.opacity += (Math.random() * 0.5 + 0.3 - p.opacity) * 0.02;
+        }
+
+        p.vx *= 0.98;
+        p.vy *= 0.98;
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > w()) p.vx *= -1;
+        if (p.y < 0 || p.y > h()) p.vy *= -1;
+        p.x = Math.max(0, Math.min(w(), p.x));
+        p.y = Math.max(0, Math.min(h(), p.y));
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${p.color}, ${p.opacity})`;
+        ctx.fill();
+      });
+
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < CONNECTION_DIST) {
+            const alpha = (1 - dist / CONNECTION_DIST) * 0.35;
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(99, 102, 241, ${alpha})`;
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+          }
+        }
+      }
+    },
+  };
+};
+
+/* ─── 2. SERVICES: Floating Geometric Shapes ─── */
+const initServices = (ctx, w, h, canvas, mouse) => {
+  const shapes = [];
+  const colors = [
+    "rgba(99,102,241,",
+    "rgba(6,182,212,",
+    "rgba(167,139,250,",
+    "rgba(244,63,94,",
+  ];
+  const types = ["hex", "tri", "diamond"];
+
+  for (let i = 0; i < 20; i++) {
+    shapes.push({
+      x: Math.random() * w(),
+      y: Math.random() * h(),
+      size: Math.random() * 12 + 4,
+      type: types[Math.floor(Math.random() * types.length)],
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rotation: Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() - 0.5) * 0.015,
+      vx: (Math.random() - 0.5) * 0.15,
+      vy: (Math.random() - 0.5) * 0.15,
+      opacity: Math.random() * 0.15 + 0.06,
+      baseSize: Math.random() * 12 + 4,
+    });
+  }
+
+  const drawHex = (ctx, x, y, r, rot) => {
+    ctx.beginPath();
+    for (let i = 0; i < 6; i++) {
+      const angle = rot + (Math.PI / 3) * i;
+      const px = x + r * Math.cos(angle);
+      const py = y + r * Math.sin(angle);
+      i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fill();
+  };
+
+  const drawTri = (ctx, x, y, r, rot) => {
+    ctx.beginPath();
+    for (let i = 0; i < 3; i++) {
+      const angle = rot + ((Math.PI * 2) / 3) * i;
+      const px = x + r * Math.cos(angle);
+      const py = y + r * Math.sin(angle);
+      i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fill();
+  };
+
+  const drawDiamond = (ctx, x, y, r, rot) => {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rot);
+    ctx.beginPath();
+    ctx.moveTo(0, -r);
+    ctx.lineTo(r * 0.6, 0);
+    ctx.lineTo(0, r);
+    ctx.lineTo(-r * 0.6, 0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  };
+
+  return {
+    animate: (ctx, w, h, mouse) => {
+      shapes.forEach((s) => {
+        // Mouse interaction: rotate faster & glow near mouse
+        const dx = mouse.x - s.x;
+        const dy = mouse.y - s.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 180) {
+          const force = (1 - dist / 180) * 0.5;
+          s.rotSpeed += force * 0.01;
+          s.opacity = Math.min(0.4, (s.baseSize / 16) * 0.15 + force * 0.2);
+          s.size = s.baseSize + force * 6;
+        } else {
+          s.rotSpeed +=
+            (shapes.indexOf(s) % 2 === 0 ? 0.015 : -0.015 - s.rotSpeed) * 0.01;
+          s.size += (s.baseSize - s.size) * 0.05;
+          s.opacity += ((s.baseSize / 16) * 0.15 + 0.06 - s.opacity) * 0.02;
+        }
+
+        s.x += s.vx;
+        s.y += s.vy;
+        s.rotation += s.rotSpeed;
+        if (s.x < -20 || s.x > w() + 20) s.vx *= -1;
+        if (s.y < -20 || s.y > h() + 20) s.vy *= -1;
+
+        ctx.fillStyle = `${s.color}${s.opacity})`;
+        if (s.type === "hex") drawHex(ctx, s.x, s.y, s.size, s.rotation);
+        else if (s.type === "tri") drawTri(ctx, s.x, s.y, s.size, s.rotation);
+        else drawDiamond(ctx, s.x, s.y, s.size, s.rotation);
+      });
+    },
+    resize: (canvas, w, h) => {
+      shapes.forEach((s) => {
+        if (s.x > w()) s.x = w() - 10;
+        if (s.y > h()) s.y = h() - 10;
+      });
+    },
+  };
+};
+
+/* ─── 3. ABOUT: Data Flow Sine Waves ─── */
+const initAbout = (ctx, w, h, canvas, mouse) => {
+  const waves = [];
+  const colors = ["99, 102, 241", "6, 182, 212", "139, 92, 246"];
+
+  for (let i = 0; i < 5; i++) {
+    waves.push({
+      amplitude: Math.random() * 15 + 8,
+      frequency: 0.008 + Math.random() * 0.006,
+      speed: 0.005 + Math.random() * 0.01,
+      phase: Math.random() * Math.PI * 2,
+      y: h() * (0.12 + i * 0.18),
+      color: colors[i % colors.length],
+      lineWidth: 1 + Math.random() * 1.5,
+      opacity: 0.08 + Math.random() * 0.08,
+      mouseInfluence: 0,
+    });
+  }
+
+  return {
+    animate: (ctx, w, h, mouse) => {
+      waves.forEach((wave) => {
+        const distToMouse = Math.abs(mouse.y - wave.y);
+        const mouseBoost =
+          distToMouse < 150 ? (1 - distToMouse / 150) * 1.5 : 0;
+        wave.opacity = Math.min(
+          0.3,
+          0.08 + Math.random() * 0.08 + mouseBoost * 0.08,
+        );
+
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(${wave.color}, ${wave.opacity})`;
+        ctx.lineWidth = wave.lineWidth + mouseBoost * 0.5;
+        for (let x = 0; x < w(); x++) {
+          const extraAmp =
+            Math.max(0, 1 - Math.abs(mouse.x - x) / 200) * mouseBoost * 10;
+          const y =
+            wave.y +
+            Math.sin(x * wave.frequency + wave.phase) *
+              (wave.amplitude + extraAmp);
+          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        wave.phase += wave.speed;
+
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(${wave.color}, ${wave.opacity * 0.4})`;
+        ctx.lineWidth = wave.lineWidth * 0.5 + mouseBoost * 0.3;
+        for (let x = 0; x < w(); x++) {
+          const extraAmp =
+            Math.max(0, 1 - Math.abs(mouse.x - x) / 200) * mouseBoost * 6;
+          const y =
+            wave.y +
+            Math.sin(x * wave.frequency * 1.5 + wave.phase * 1.3) *
+              (wave.amplitude * 0.7 + extraAmp);
+          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      });
+    },
+  };
+};
+
+/* ─── 4. WHY CHOOSE US: Rising Ember Particles ─── */
+const initWhyChoose = (ctx, w, h, canvas, mouse) => {
+  const embers = [];
+  const colors = [
+    "99, 102, 241",
+    "6, 182, 212",
+    "245, 158, 11",
+    "167, 139, 250",
+  ];
+
+  for (let i = 0; i < 35; i++) {
+    embers.push(createEmber(w(), h(), colors));
+  }
+
+  function createEmber(cw, ch, cols) {
+    return {
+      x: Math.random() * cw,
+      y: Math.random() * ch,
+      size: Math.random() * 2 + 0.5,
+      color: cols[Math.floor(Math.random() * cols.length)],
+      vy: -(Math.random() * 0.3 + 0.15),
+      vx: (Math.random() - 0.5) * 0.2,
+      opacity: Math.random() * 0.3 + 0.1,
+      pulse: Math.random() * Math.PI * 2,
+      pulseSpeed: 0.01 + Math.random() * 0.02,
+      baseSize: Math.random() * 2 + 0.5,
+    };
+  }
+
+  return {
+    animate: (ctx, w, h, mouse) => {
+      embers.forEach((e) => {
+        // Mouse: attract and brighten
+        const dx = mouse.x - e.x;
+        const dy = mouse.y - e.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 150) {
+          const force = (1 - dist / 150) * 0.4;
+          e.vx += dx * force * 0.005;
+          e.vy += dy * force * 0.005;
+          e.size = e.baseSize + force * 4;
+        } else {
+          e.size += (e.baseSize - e.size) * 0.05;
+        }
+
+        e.y += e.vy;
+        e.x += e.vx;
+        e.pulse += e.pulseSpeed;
+        e.vx *= 0.99;
+        e.vy *= 0.99;
+
+        const pulseOpacity = Math.min(
+          1,
+          e.opacity * (0.6 + 0.4 * Math.sin(e.pulse)),
+        );
+        if (e.y < -10) {
+          Object.assign(e, createEmber(w(), h(), colors));
+          e.y = h() + 10;
+        }
+        if (e.x < -10 || e.x > w() + 10) e.vx *= -1;
+
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${e.color}, ${pulseOpacity})`;
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, e.size * 3, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${e.color}, ${pulseOpacity * 0.2})`;
+        ctx.fill();
+      });
+    },
+  };
+};
+
+/* ─── 5. TESTIMONIALS: Orbiting Rings ─── */
+const initTestimonials = (ctx, w, h, canvas, mouse) => {
+  const systems = [];
+  const colors = ["99, 102, 241", "6, 182, 212", "167, 139, 250"];
+
+  for (let s = 0; s < 3; s++) {
+    const cx = w() * (0.2 + s * 0.3);
+    const cy = h() * (0.3 + Math.random() * 0.4);
+    const rings = [];
+    for (let r = 0; r < 2; r++) {
+      const orbitR = 30 + r * 25 + Math.random() * 15;
+      const dots = [];
+      for (let d = 0; d < 5 + Math.floor(Math.random() * 4); d++) {
+        dots.push({
+          angle: Math.random() * Math.PI * 2,
+          speed: (Math.random() * 0.005 + 0.003) * (r % 2 === 0 ? 1 : -1),
+          size: Math.random() * 2 + 1.5,
+          opacity: Math.random() * 0.2 + 0.1,
+          baseSize: Math.random() * 2 + 1.5,
+        });
+      }
+      rings.push({ orbitR, dots, color: colors[(s + r) % colors.length] });
+    }
+    systems.push({ cx, cy, rings });
+  }
+
+  return {
+    animate: (ctx, w, h, mouse) => {
+      systems.forEach((sys) => {
+        const dx = mouse.x - sys.cx;
+        const dy = mouse.y - sys.cy;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const nearMouse = dist < 200;
+        const force = nearMouse ? (1 - dist / 200) * 1.5 : 0;
+
+        sys.rings.forEach((ring) => {
+          ctx.beginPath();
+          ctx.arc(sys.cx, sys.cy, ring.orbitR + force * 10, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(${ring.color}, ${0.04 + force * 0.06})`;
+          ctx.lineWidth = 0.5 + force * 0.5;
+          ctx.stroke();
+
+          ring.dots.forEach((dot) => {
+            dot.angle += dot.speed + (nearMouse ? force * 0.003 : 0);
+            const r = ring.orbitR + (nearMouse ? force * 8 : 0);
+            const x = sys.cx + Math.cos(dot.angle) * r;
+            const y = sys.cy + Math.sin(dot.angle) * r;
+            const sizeBoost = nearMouse ? force * 2 : 0;
+            ctx.beginPath();
+            ctx.arc(x, y, dot.baseSize + sizeBoost, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${ring.color}, ${Math.min(1, dot.opacity + force * 0.1)})`;
+            ctx.fill();
+          });
+        });
+      });
+    },
+    resize: (canvas, w, h) => {
+      systems.forEach((sys, i) => {
+        sys.cx = w() * (0.2 + i * 0.3);
+        sys.cy = h() * (0.3 + Math.random() * 0.1);
+      });
+    },
+  };
+};
+
+/* ─── 6. FAQ: Fluid Morphing Blobs ─── */
+const initFaq = (ctx, w, h, canvas, mouse) => {
+  const blobs = [];
+  for (let i = 0; i < 3; i++) {
+    blobs.push({
+      x: w() * (0.2 + i * 0.3),
+      y: h() * (0.3 + Math.random() * 0.4),
+      radius: 40 + Math.random() * 30,
+      time: Math.random() * Math.PI * 2,
+      speed: 0.003 + Math.random() * 0.003,
+      deformX: Math.random() * 0.4 + 0.3,
+      deformY: Math.random() * 0.4 + 0.3,
+      color: ["99, 102, 241", "6, 182, 212", "167, 139, 250"][i],
+      opacity: 0.06 + Math.random() * 0.04,
+      baseRadius: 40 + Math.random() * 30,
+    });
+  }
+
+  return {
+    animate: (ctx, w, h, mouse) => {
+      blobs.forEach((b) => {
+        b.time += b.speed;
+        const dx = mouse.x - b.x;
+        const dy = mouse.y - b.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const nearMouse = dist < 180;
+        const force = nearMouse ? (1 - dist / 180) * 0.5 : 0;
+
+        b.radius = b.baseRadius + force * 15;
+        b.opacity = Math.min(0.3, 0.06 + Math.random() * 0.04 + force * 0.12);
+
+        if (nearMouse) {
+          b.x += (mouse.x - b.x) * 0.005;
+          b.y += (mouse.y - b.y) * 0.005;
+        }
+
+        const points = 20;
+        ctx.beginPath();
+        for (let i = 0; i <= points; i++) {
+          const angle = ((Math.PI * 2) / points) * i;
+          const r =
+            b.radius +
+            Math.sin(angle * 3 + b.time) * b.deformX * (15 + force * 10) +
+            Math.cos(angle * 2 + b.time * 1.3) * b.deformY * (12 + force * 8);
+          const px = b.x + Math.cos(angle) * r;
+          const py = b.y + Math.sin(angle) * r;
+          i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.fillStyle = `rgba(${b.color}, ${b.opacity})`;
+        ctx.fill();
+      });
+    },
+  };
+};
+
+/* ─── 7. CTA: Pulsing Energy Rings ─── */
+const initCta = (ctx, w, h, canvas, mouse) => {
+  const rings = [];
+  const colors = ["99, 102, 241", "6, 182, 212"];
+
+  for (let i = 0; i < 8; i++) {
+    rings.push({
+      x: Math.random() * w(),
+      y: Math.random() * h(),
+      radius: 0,
+      maxRadius: 40 + Math.random() * 60,
+      speed: 0.15 + Math.random() * 0.2,
+      color: colors[i % colors.length],
+      opacity: 0.15,
+      phase: Math.random() * Math.PI * 2,
+      baseMax: 40 + Math.random() * 60,
+    });
+  }
+
+  return {
+    animate: (ctx, w, h, mouse) => {
+      rings.forEach((r) => {
+        // Mouse: rings burst faster & bigger near cursor
+        const dx = mouse.x - r.x;
+        const dy = mouse.y - r.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const force = dist < 200 ? (1 - dist / 200) * 2 : 0;
+
+        r.radius += r.speed + force * 0.3;
+        r.maxRadius = r.baseMax + force * 40;
+        r.opacity = Math.min(
+          0.4,
+          0.15 * (1 - r.radius / r.maxRadius) + force * 0.1,
+        );
+
+        if (r.radius > r.maxRadius) {
+          r.radius = 0;
+          r.x = mouse.x + (Math.random() - 0.5) * 100;
+          r.y = mouse.y + (Math.random() - 0.5) * 100;
+          r.opacity = 0.15 + force * 0.05;
+        }
+
+        ctx.beginPath();
+        ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(${r.color}, ${r.opacity})`;
+        ctx.lineWidth = 1.5 + force * 0.5;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(r.x, r.y, r.radius * 0.7, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${r.color}, ${r.opacity * 0.2})`;
+        ctx.fill();
+      });
+    },
+  };
+};
+
+gsap.ticker.lagSmoothing(0);
+
 onMounted(() => {
   observeElements();
   startAutoPlay();
+
+  // Init all section animations
+  const hero = initSectionCanvas(canvasRef, initHero);
+  if (hero) animCleanups.push(hero);
+
+  const services = initSectionCanvas(servicesCanvasRef, initServices);
+  if (services) animCleanups.push(services);
+
+  const about = initSectionCanvas(aboutCanvasRef, initAbout);
+  if (about) animCleanups.push(about);
+
+  const why = initSectionCanvas(whyCanvasRef, initWhyChoose);
+  if (why) animCleanups.push(why);
+
+  const testimonial = initSectionCanvas(testimonialCanvasRef, initTestimonials);
+  if (testimonial) animCleanups.push(testimonial);
+
+  const faq = initSectionCanvas(faqCanvasRef, initFaq);
+  if (faq) animCleanups.push(faq);
+
+  const cta = initSectionCanvas(ctaCanvasRef, initCta);
+  if (cta) animCleanups.push(cta);
 
   window.addEventListener("scroll", () => {
     const winScroll = document.documentElement.scrollTop;
@@ -202,10 +779,59 @@ onMounted(() => {
       document.documentElement.clientHeight;
     scrollProgress.value = (winScroll / height) * 100;
   });
+
+  // Hero entrance animation
+  const heroEl = heroContentRef.value;
+  if (heroEl) {
+    const items = heroEl.children;
+    gsap.fromTo(
+      items,
+      { opacity: 0, y: 40, scale: 0.95, filter: "blur(8px)" },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        filter: "blur(0px)",
+        duration: 0.8,
+        stagger: 0.12,
+        ease: "power3.out",
+        clearProps: "filter",
+      },
+    );
+    // Stats stagger separately
+    const statsEl = heroEl.querySelector(".hero-stats");
+    if (statsEl) {
+      const statItems = statsEl.children;
+      gsap.fromTo(
+        statItems,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.08,
+          delay: 0.8,
+          ease: "power2.out",
+        },
+      );
+    }
+  }
 });
 
 onBeforeUnmount(() => {
   stopAutoPlay();
+  animCleanups.forEach(({ ticker, resizeHandler, mouseCleanup }) => {
+    gsap.ticker.remove(ticker);
+    window.removeEventListener("resize", resizeHandler);
+    if (mouseCleanup) mouseCleanup();
+  });
+  animCleanups.length = 0;
+  if (animationTween) {
+    gsap.ticker.remove(animationTween);
+    if (animationTween._resizeHandler) {
+      window.removeEventListener("resize", animationTween._resizeHandler);
+    }
+  }
 });
 </script>
 
@@ -225,6 +851,13 @@ onBeforeUnmount(() => {
       <div class="absolute inset-0 gradient-hero"></div>
       <div class="absolute inset-0 bg-grid-pattern"></div>
 
+      <!-- GSAP Particle Network -->
+      <canvas
+        ref="canvasRef"
+        class="absolute inset-0 w-full h-full pointer-events-none"
+        style="opacity: 0.88"
+      ></canvas>
+
       <!-- Animated floating orbs -->
       <div class="absolute inset-0 overflow-hidden pointer-events-none">
         <div
@@ -241,11 +874,12 @@ onBeforeUnmount(() => {
       </div>
 
       <div
+        ref="heroContentRef"
         class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
       >
         <!-- Badge -->
         <div
-          class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-primary/20 mb-8 animate-fade-in"
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-primary/20 mb-8"
         >
           <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
           <span class="text-sm text-gray-300"
@@ -255,18 +889,14 @@ onBeforeUnmount(() => {
 
         <!-- Main Heading -->
         <h1
-          class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold leading-tight mb-6 animate-fade-in"
-          style="animation-delay: 0.2s"
+          class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold leading-tight mb-6"
         >
           <span class="text-white">Digital Solutions</span>
           <br />
           <span class="gradient-text">For Tomorrow</span>
         </h1>
 
-        <p
-          class="max-w-2xl mx-auto text-lg sm:text-xl text-gray-400 mb-10 animate-fade-in"
-          style="animation-delay: 0.4s"
-        >
+        <p class="max-w-2xl mx-auto text-lg sm:text-xl text-gray-400 mb-10">
           We empower businesses with innovative technology solutions that drive
           growth, enhance efficiency, and create exceptional digital
           experiences.
@@ -274,8 +904,7 @@ onBeforeUnmount(() => {
 
         <!-- CTA Buttons -->
         <div
-          class="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in"
-          style="animation-delay: 0.6s"
+          class="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <router-link
             to="/contact"
@@ -312,8 +941,7 @@ onBeforeUnmount(() => {
 
         <!-- Stats bar -->
         <div
-          class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto animate-fade-in"
-          style="animation-delay: 0.8s"
+          class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto hero-stats"
         >
           <div v-for="(stat, index) in stats" :key="index" class="text-center">
             <div class="text-3xl md:text-4xl font-bold gradient-text mb-1">
@@ -342,13 +970,20 @@ onBeforeUnmount(() => {
       </div>
     </section>
 
-    <!-- ==================== SERVICES SECTION ==================== -->
+    <!-- ==================== SERsectionECTION ==================== -->
     <section id="services" class="relative py-32 overflow-hidden">
       <!-- Background -->
       <div class="absolute inset-0 bg-darker"></div>
       <div
         class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"
       ></div>
+
+      <!-- GSAP Floating Shapes -->
+      <canvas
+        ref="servicesCanvasRef"
+        class="absolute inset-0 w-full h-full pointer-events-none"
+        style="opacity: 0.9"
+      ></canvas>
 
       <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
@@ -413,6 +1048,13 @@ onBeforeUnmount(() => {
       <div
         class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-secondary/30 to-transparent"
       ></div>
+
+      <!-- GSAP Data Waves -->
+      <canvas
+        ref="aboutCanvasRef"
+        class="absolute inset-0 w-full h-full pointer-events-none"
+        style="opacity: 0.8"
+      ></canvas>
 
       <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -556,6 +1198,13 @@ onBeforeUnmount(() => {
         class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"
       ></div>
 
+      <!-- GSAP Rising Embers -->
+      <canvas
+        ref="whyCanvasRef"
+        class="absolute inset-0 w-full h-full pointer-events-none"
+        style="opacity: 0.85"
+      ></canvas>
+
       <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
           <span
@@ -626,6 +1275,13 @@ onBeforeUnmount(() => {
       <div
         class="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-secondary/30 to-transparent"
       ></div>
+
+      <!-- GSAP Orbiting Rings -->
+      <canvas
+        ref="testimonialCanvasRef"
+        class="absolute inset-0 w-full h-full pointer-events-none"
+        style="opacity: 0.75"
+      ></canvas>
 
       <!-- Decorative background -->
       <div
@@ -850,6 +1506,13 @@ onBeforeUnmount(() => {
     <section class="relative py-32 overflow-hidden">
       <div class="absolute inset-0 bg-dark"></div>
 
+      <!-- GSAP Morphing Blobs -->
+      <canvas
+        ref="faqCanvasRef"
+        class="absolute inset-0 w-full h-full pointer-events-none"
+        style="opacity: 0.75"
+      ></canvas>
+
       <!-- Decorative gradient blobs -->
       <div
         class="absolute top-1/3 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none"
@@ -1011,6 +1674,13 @@ onBeforeUnmount(() => {
       <div
         class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"
       ></div>
+
+      <!-- GSAP Pulsing Energy Rings -->
+      <canvas
+        ref="ctaCanvasRef"
+        class="absolute inset-0 w-full h-full pointer-events-none"
+        style="opacity: 0.8"
+      ></canvas>
 
       <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <!-- Background glow -->
