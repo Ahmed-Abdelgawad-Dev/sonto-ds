@@ -147,11 +147,12 @@ const footerLinks = {
         class="mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4"
       >
         <p class="text-gray-500 text-sm">
-          &copy; {{ currentYear }} SONTO. All rights reserved.
+          &copy; {{ currentYear }} Sonto Digital Solutions LLC | All Rights
+          reserved.
         </p>
         <p class="text-gray-500 text-sm">
           Crafted with
-          <span class="text-red-500">&hearts;</span> in Egypt
+          <span class="text-red-500">&hearts;</span> By Sonto Web Team
         </p>
       </div>
     </div>

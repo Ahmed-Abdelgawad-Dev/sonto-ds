@@ -824,7 +824,7 @@ onBeforeUnmount(() => {
     </section>
 
     <!-- ==================== PARTNERS SECTION ==================== -->
-    <section class="relative py-20 overflow-hidden bg-darker">
+    <!-- <section class="relative py-20 overflow-hidden bg-darker">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <p
           class="text-center text-gray-500 text-sm uppercase tracking-widest mb-10"
@@ -844,7 +844,7 @@ onBeforeUnmount(() => {
           </div>
         </div>
       </div>
-    </section>
+    </section> -->
 
     <!-- ==================== FAQ SECTION ==================== -->
     <section class="relative py-32 overflow-hidden">
