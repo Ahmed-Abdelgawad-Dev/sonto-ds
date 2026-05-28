@@ -74,7 +74,7 @@ const footerLinks = {
             growth and innovation.
           </p>
           <!-- Social Links -->
-          <div class="flex space-x-3">
+          <!-- <div class="flex space-x-3">
             <a
               href="#"
               class="w-10 h-10 flex items-center justify-center rounded-lg bg-white/5 hover:bg-primary/20 border border-white/5 hover:border-primary/30 text-gray-400 hover:text-primary transition-all duration-300"
@@ -115,7 +115,7 @@ const footerLinks = {
                 />
               </svg>
             </a>
-          </div>
+          </div> -->
         </div>
 
         <!-- Links -->

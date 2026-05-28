@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useRouter } from "vue-router";
 import gsap from "gsap";
+import Typed from "typed.js";
 
 const router = useRouter();
 const animatedElements = ref([]);
@@ -13,6 +14,8 @@ const testimonialCanvasRef = ref(null);
 const faqCanvasRef = ref(null);
 const ctaCanvasRef = ref(null);
 const heroContentRef = ref(null);
+const typedHeadingRef = ref(null);
+let typedInstance = null;
 let animationTween = null;
 let particles = [];
 const animCleanups = [];
@@ -780,46 +783,86 @@ onMounted(() => {
     scrollProgress.value = (winScroll / height) * 100;
   });
 
-  // Hero entrance animation
+  // Hero entrance animation with Typed.js
   const heroEl = heroContentRef.value;
   if (heroEl) {
-    const items = heroEl.children;
+    const items = Array.from(heroEl.children);
+
+    // 1. Badge fades in first
+    const badge = items[0];
     gsap.fromTo(
-      items,
-      { opacity: 0, y: 40, scale: 0.95, filter: "blur(8px)" },
-      {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        filter: "blur(0px)",
-        duration: 0.8,
-        stagger: 0.12,
-        ease: "power3.out",
-        clearProps: "filter",
-      },
+      badge,
+      { opacity: 0, y: -20 },
+      { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
     );
-    // Stats stagger separately
-    const statsEl = heroEl.querySelector(".hero-stats");
-    if (statsEl) {
-      const statItems = statsEl.children;
-      gsap.fromTo(
-        statItems,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          stagger: 0.08,
-          delay: 0.8,
-          ease: "power2.out",
-        },
-      );
-    }
+
+    // 2. Start Typed.js on heading after a short delay
+    setTimeout(() => {
+      if (typedHeadingRef.value) {
+        typedInstance = new Typed(typedHeadingRef.value, {
+          strings: [
+            `Digital Solutions<br/><span class="gradient-text">For Tomorrow</span>`,
+          ],
+          typeSpeed: 50,
+          startDelay: 200,
+          backSpeed: 0,
+          showCursor: true,
+          cursorChar: "|",
+          autoInsertCss: true,
+          onComplete: () => {
+            // 3. After typing done, animate paragraph, buttons & stats
+            const para = items[1];
+            const buttons = items[2];
+            const statsEl = heroEl.querySelector(".hero-stats");
+
+            gsap.fromTo(
+              para,
+              { opacity: 0, y: 30 },
+              { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" },
+            );
+
+            gsap.fromTo(
+              buttons,
+              { opacity: 0, y: 30, scale: 0.95 },
+              {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                duration: 0.6,
+                stagger: 0.1,
+                ease: "back.out(1.7)",
+                delay: 0.2,
+              },
+            );
+
+            if (statsEl) {
+              const statItems = statsEl.children;
+              gsap.fromTo(
+                statItems,
+                { opacity: 0, y: 25 },
+                {
+                  opacity: 1,
+                  y: 0,
+                  duration: 0.5,
+                  stagger: 0.06,
+                  delay: 0.4,
+                  ease: "power2.out",
+                },
+              );
+            }
+          },
+        });
+      }
+    }, 400);
   }
 });
 
 onBeforeUnmount(() => {
   stopAutoPlay();
+  if (typedInstance) {
+    typedInstance.destroy();
+    typedInstance = null;
+  }
   animCleanups.forEach(({ ticker, resizeHandler, mouseCleanup }) => {
     gsap.ticker.remove(ticker);
     window.removeEventListener("resize", resizeHandler);
@@ -889,11 +932,9 @@ onBeforeUnmount(() => {
 
         <!-- Main Heading -->
         <h1
-          class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold leading-tight mb-6"
+          class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold leading-tight mb-6 min-h-[1.4em]"
         >
-          <span class="text-white">Digital Solutions</span>
-          <br />
-          <span class="gradient-text">For Tomorrow</span>
+          <span ref="typedHeadingRef" class="typed-heading"></span>
         </h1>
 
         <p class="max-w-2xl mx-auto text-lg sm:text-xl text-gray-400 mb-10">
@@ -1778,6 +1819,26 @@ onBeforeUnmount(() => {
     opacity: 0;
     transform: translateX(-60px) scale(0.95);
     filter: blur(4px);
+  }
+}
+
+/* Typed.js cursor styling */
+:deep(.typed-cursor) {
+  color: #6366f1;
+  font-weight: 100;
+  animation: blink 0.8s infinite;
+  font-size: 0.9em;
+  opacity: 1;
+}
+
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
   }
 }
 </style>

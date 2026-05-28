@@ -6,9 +6,9 @@ import WhatsAppButton from "@/components/WhatsAppButton.vue";
 
 <template>
   <!-- Main Content -->
-  <div class="min-h-screen bg-dark overflow-hidden">
+  <div class="min-h-screen bg-dark flex flex-col overflow-x-hidden">
     <Navbar />
-    <main>
+    <main class="flex-1">
       <router-view v-slot="{ Component, route }">
         <Transition name="page" mode="out-in">
           <component :is="Component" :key="route.path" />
