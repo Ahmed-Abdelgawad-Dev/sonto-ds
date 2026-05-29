@@ -16,6 +16,7 @@ const ctaCanvasRef = ref(null);
 const heroContentRef = ref(null);
 const typedHeadingRef = ref(null);
 let typedInstance = null;
+let typedTimer = null;
 let animationTween = null;
 let particles = [];
 const animCleanups = [];
@@ -783,6 +784,90 @@ onMounted(() => {
     scrollProgress.value = (winScroll / height) * 100;
   });
 
+  let hasRunOnce = false;
+
+  const startTypedAnimation = () => {
+    if (!typedHeadingRef.value) return;
+    const heroEl = heroContentRef.value;
+    if (!heroEl) return;
+
+    // Destroy previous instance
+    if (typedInstance) {
+      typedInstance.destroy();
+      typedInstance = null;
+    }
+
+    // Clear the heading content
+    typedHeadingRef.value.innerHTML = "";
+
+    const items = Array.from(heroEl.children);
+
+    if (!hasRunOnce) {
+      // First run: badge is already visible
+      const badge = items[0];
+      gsap.set(badge, { opacity: 1, y: 0 });
+    }
+
+    // Start Typed.js on heading
+    typedInstance = new Typed(typedHeadingRef.value, {
+      strings: [
+        `Digital Solutions<br/><span class="gradient-text">For Tomorrow</span>`,
+      ],
+      typeSpeed: 50,
+      startDelay: 200,
+      backSpeed: 0,
+      showCursor: true,
+      cursorChar: "|",
+      autoInsertCss: true,
+      onComplete: () => {
+        if (!hasRunOnce) {
+          hasRunOnce = true;
+
+          // First run only: animate paragraph, buttons & stats
+          const para = items[1];
+          const buttons = items[2];
+          const statsEl = heroEl.querySelector(".hero-stats");
+
+          gsap.fromTo(
+            para,
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" },
+          );
+
+          gsap.fromTo(
+            buttons,
+            { opacity: 0, y: 30, scale: 0.95 },
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.6,
+              stagger: 0.1,
+              ease: "back.out(1.7)",
+              delay: 0.2,
+            },
+          );
+
+          if (statsEl) {
+            const statItems = statsEl.children;
+            gsap.fromTo(
+              statItems,
+              { opacity: 0, y: 25 },
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.5,
+                stagger: 0.06,
+                delay: 0.4,
+                ease: "power2.out",
+              },
+            );
+          }
+        }
+      },
+    });
+  };
+
   // Hero entrance animation with Typed.js
   const heroEl = heroContentRef.value;
   if (heroEl) {
@@ -798,67 +883,23 @@ onMounted(() => {
 
     // 2. Start Typed.js on heading after a short delay
     setTimeout(() => {
-      if (typedHeadingRef.value) {
-        typedInstance = new Typed(typedHeadingRef.value, {
-          strings: [
-            `Digital Solutions<br/><span class="gradient-text">For Tomorrow</span>`,
-          ],
-          typeSpeed: 50,
-          startDelay: 200,
-          backSpeed: 0,
-          showCursor: true,
-          cursorChar: "|",
-          autoInsertCss: true,
-          onComplete: () => {
-            // 3. After typing done, animate paragraph, buttons & stats
-            const para = items[1];
-            const buttons = items[2];
-            const statsEl = heroEl.querySelector(".hero-stats");
-
-            gsap.fromTo(
-              para,
-              { opacity: 0, y: 30 },
-              { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" },
-            );
-
-            gsap.fromTo(
-              buttons,
-              { opacity: 0, y: 30, scale: 0.95 },
-              {
-                opacity: 1,
-                y: 0,
-                scale: 1,
-                duration: 0.6,
-                stagger: 0.1,
-                ease: "back.out(1.7)",
-                delay: 0.2,
-              },
-            );
-
-            if (statsEl) {
-              const statItems = statsEl.children;
-              gsap.fromTo(
-                statItems,
-                { opacity: 0, y: 25 },
-                {
-                  opacity: 1,
-                  y: 0,
-                  duration: 0.5,
-                  stagger: 0.06,
-                  delay: 0.4,
-                  ease: "power2.out",
-                },
-              );
-            }
-          },
-        });
-      }
+      startTypedAnimation();
     }, 400);
   }
+
+  // 3. Re-trigger Typed.js every 10 seconds
+  const TYPED_REFRESH_MS = 10000;
+  setTimeout(() => {
+    typedTimer = setInterval(startTypedAnimation, TYPED_REFRESH_MS);
+  }, 6000); // Wait 6s for initial animation to settle
 });
 
 onBeforeUnmount(() => {
   stopAutoPlay();
+  if (typedTimer) {
+    clearInterval(typedTimer);
+    typedTimer = null;
+  }
   if (typedInstance) {
     typedInstance.destroy();
     typedInstance = null;
@@ -927,7 +968,7 @@ onBeforeUnmount(() => {
       >
         <!-- Badge -->
         <div
-          class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-primary/20 mb-8"
+          class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full glass border border-primary/20 mb-4 sm:mb-6 md:mb-8"
         >
           <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
           <span class="text-sm text-gray-300"
@@ -937,12 +978,14 @@ onBeforeUnmount(() => {
 
         <!-- Main Heading -->
         <h1
-          class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold leading-tight mb-6 min-h-[1.4em]"
+          class="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold leading-tight mb-4 sm:mb-6 min-h-[1.2em] px-2"
         >
           <span ref="typedHeadingRef" class="typed-heading"></span>
         </h1>
 
-        <p class="max-w-2xl mx-auto text-lg sm:text-xl text-gray-400 mb-10">
+        <p
+          class="max-w-2xl mx-auto text-base sm:text-lg md:text-xl text-gray-400 mb-6 md:mb-10 px-2 sm:px-0"
+        >
           We empower businesses with innovative technology solutions that drive
           growth, enhance efficiency, and create exceptional digital
           experiences.
@@ -950,11 +993,11 @@ onBeforeUnmount(() => {
 
         <!-- CTA Buttons -->
         <div
-          class="flex flex-col sm:flex-row items-center justify-center gap-4"
+          class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto px-4 sm:px-0"
         >
           <router-link
             to="/contact"
-            class="group relative px-8 py-4 rounded-xl text-lg font-semibold text-white gradient-primary overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-primary/30 hover:scale-105 btn-border-glow"
+            class="group relative w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-semibold text-white gradient-primary overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-primary/30 hover:scale-105 btn-border-glow"
           >
             <span class="relative z-10">Start Your Project</span>
             <div
@@ -964,9 +1007,9 @@ onBeforeUnmount(() => {
 
           <router-link
             to="/services"
-            class="group px-8 py-4 rounded-xl text-lg font-semibold text-white glass border border-white/10 hover:border-primary/30 hover:bg-white/5 transition-all duration-300 btn-border-glow"
+            class="group relative w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-semibold text-white glass border border-white/10 hover:border-primary/30 hover:bg-white/5 transition-all duration-300 btn-border-glow"
           >
-            <span class="flex items-center gap-2">
+            <span class="flex items-center justify-center gap-2">
               Explore Services
               <svg
                 class="w-5 h-5 group-hover:translate-x-1 transition-transform"
@@ -987,7 +1030,7 @@ onBeforeUnmount(() => {
 
         <!-- Stats bar -->
         <div
-          class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto hero-stats"
+          class="mt-10 sm:mt-14 md:mt-20 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8 max-w-3xl mx-auto hero-stats"
         >
           <div v-for="(stat, index) in stats" :key="index" class="text-center">
             <div class="text-3xl md:text-4xl font-bold gradient-text mb-1">

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, onBeforeUnmount } from "vue";
 import { useRouter, useRoute } from "vue-router";
 
 const router = useRouter();
@@ -7,6 +7,8 @@ const route = useRoute();
 const isMenuOpen = ref(false);
 const isScrolled = ref(false);
 const activeLink = ref("Home");
+const isLogoAnimating = ref(false);
+let logoAnimTimer = null;
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -40,10 +42,28 @@ watch(
   },
 );
 
+const triggerLogoAnimation = () => {
+  isLogoAnimating.value = true;
+  setTimeout(() => {
+    isLogoAnimating.value = false;
+  }, 4000);
+};
+
 onMounted(() => {
   window.addEventListener("scroll", handleScroll);
   const link = navLinks.find((l) => l.path === route.path);
   if (link) activeLink.value = link.name;
+
+  // Auto-trigger logo animation every 5 seconds
+  triggerLogoAnimation();
+  logoAnimTimer = setInterval(triggerLogoAnimation, 5000);
+});
+
+onBeforeUnmount(() => {
+  if (logoAnimTimer) {
+    clearInterval(logoAnimTimer);
+    logoAnimTimer = null;
+  }
 });
 </script>
 
@@ -66,23 +86,38 @@ onMounted(() => {
             class="flex items-baseline justify-between w-full text-[28px] font-extrabold leading-none"
           >
             <span
-              class="ignite-letter bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 bg-clip-text text-transparent"
+              :class="[
+                'ignite-letter bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 bg-clip-text text-transparent',
+                { 'auto-ignite': isLogoAnimating },
+              ]"
               style="--i: 0"
               >S</span
             ><span
-              class="ignite-letter bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 bg-clip-text text-transparent"
+              :class="[
+                'ignite-letter bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 bg-clip-text text-transparent',
+                { 'auto-ignite': isLogoAnimating },
+              ]"
               style="--i: 1"
               >O</span
             ><span
-              class="ignite-letter bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 bg-clip-text text-transparent"
+              :class="[
+                'ignite-letter bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 bg-clip-text text-transparent',
+                { 'auto-ignite': isLogoAnimating },
+              ]"
               style="--i: 2"
               >N</span
             ><span
-              class="ignite-letter bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 bg-clip-text text-transparent"
+              :class="[
+                'ignite-letter bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 bg-clip-text text-transparent',
+                { 'auto-ignite': isLogoAnimating },
+              ]"
               style="--i: 3"
               >T</span
             ><span
-              class="ignite-letter bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 bg-clip-text text-transparent"
+              :class="[
+                'ignite-letter bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 bg-clip-text text-transparent',
+                { 'auto-ignite': isLogoAnimating },
+              ]"
               style="--i: 4"
               >O</span
             >
@@ -206,6 +241,13 @@ onMounted(() => {
 }
 
 .group:hover .ignite-letter {
+  animation:
+    ignite 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--i) * 0.08s)
+      forwards,
+    pulse-glow 3s ease-in-out calc(var(--i) * 0.08s + 0.9s) infinite;
+}
+
+.ignite-letter.auto-ignite {
   animation:
     ignite 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--i) * 0.08s)
       forwards,
